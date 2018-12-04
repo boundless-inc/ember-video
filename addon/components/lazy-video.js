@@ -1,5 +1,5 @@
 import { inject as service } from '@ember/service';
-import { computed, get, set } from '@ember/object';
+import { computed, set } from '@ember/object';
 import { htmlSafe } from '@ember/string';
 import Component from '@ember/component';
 
@@ -12,7 +12,7 @@ export default Component.extend({
   attributeBindings: ['style'],
   videoThumbnail: null,
   poster: null,
-  providers: service('lazy-video-providers'),
+  videoProviders: service(),
 
   click() {
     set(this, 'isDisplayed', true);
@@ -20,29 +20,19 @@ export default Component.extend({
   },
 
   videoSrc: computed('url', function() {
-    let providers = get(this, 'providers');
-    let url       = get(this, 'url');
-    return providers.getUrl(url, 'embedUrl', { autoplay: 1 });
+    return this.videoProviders.getUrl(this.url, 'embedUrl', { autoplay: 1 });
   }),
 
   didInsertElement() {
     this._super(...arguments);
-    let providers = get(this, 'providers');
-    let url       = get(this, 'url');
-    let poster    = get(this, 'poster');
-
-    if (poster) {
+    if (this.poster) {
       return;
     }
-
-    providers.getThumbnailUrl(url).then((res) => {
-      set(this, 'videoThumbnail', res);
-    });
+    this.videoProviders.getThumbnailUrl(this.url).then((res) => set(this, 'videoThumbnail', res));
   },
 
-  style: computed('videoThumbnail', 'poster', function() {
-    let poster = get(this, 'poster');
-    let thumbnail = poster || get(this, 'videoThumbnail');
+  style: computed('poster', 'videoThumbnail', function() {
+    let thumbnail = this.poster || this.videoThumbnail;
     return htmlSafe(`background-image: url(${encodeURI(thumbnail)})`);
   })
 });
