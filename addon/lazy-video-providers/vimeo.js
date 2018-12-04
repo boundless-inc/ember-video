@@ -1,4 +1,5 @@
-import { promise } from 'rsvp';
+import RSVP from 'rsvp';
+import fetch from 'fetch';
 
 export default {
   apiUrl(videoId) {
@@ -9,10 +10,8 @@ export default {
   },
   thumbnailUrl(videoId) {
     let apiUrl = this.apiUrl(videoId);
-    return new promise((resolve) => {
-      $.getJSON(apiUrl).then((res) => {
-        resolve(res.thumbnail_url);
-      });
+    return new RSVP.Promise((resolve) => {
+      fetch(apiUrl).then((res) => resolve(res.thumbnail_url));
     });
   }
 };
