@@ -1,13 +1,10 @@
 import { inject as service } from '@ember/service';
 import { computed, get, set } from '@ember/object';
 import { htmlSafe } from '@ember/string';
-import { Component } from '@ember/component';
-
-const {
-  on,
-} = Ember;
+import Component from '@ember/component';
 
 export default Component.extend({
+  showingVideo() {},
   isDisplayed: false,
   videoTitle: null,
   url: null,
@@ -19,7 +16,7 @@ export default Component.extend({
 
   click() {
     set(this, 'isDisplayed', true);
-    this.sendAction('showingVideo');
+    this.showingVideo();
   },
 
   videoSrc: computed('url', function() {
